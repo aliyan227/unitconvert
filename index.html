@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit Converter - Made by Muhammad Aliyan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0d0d0d, #1a0033);
+      color: #00ffee;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    header {
+      text-align: center;
+      padding: 50px 20px;
+      font-size: 2.5em;
+      background: linear-gradient(90deg, #00ffee, #ff00ff, #00ffee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 3s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff00ff; }
+      to   { text-shadow: 0 0 30px #00ffee; }
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    .card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid #00ffee;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 550px;
+      width: 95%;
+      margin-bottom: 30px;
+      box-shadow: 0 0 20px #00ffee, inset 0 0 25px #ff00ff66;
+      backdrop-filter: blur(8px);
+    }
+    select, input, button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 14px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #00ffee;
+      font-family: 'Orbitron', sans-serif;
+    }
+    button {
+      background: linear-gradient(90deg, #00ffee, #ff00ff);
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #00ffee, 0 0 40px #ff00ff;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #88ffff;
+      text-shadow: 0 0 10px #00ffee;
+    }
+  </style>
+</head>
+<body>
+  <header>⚡ Neon Unit Converter</header>
+  <main>
+    <div class="card">
+      <select id="category" onchange="loadUnits()">
+        <option value="" disabled selected>Select a conversion type</option>
+        <option value="length">Length</option>
+        <option value="mass">Mass</option>
+        <option value="temperature">Temperature</option>
+        <option value="pressure">Pressure</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <input type="number" id="inputValue" placeholder="Enter value..." />
+      <select id="fromUnit"></select>
+      <select id="toUnit"></select>
+      <button onclick="convert()">Convert</button>
+      <h2 id="result" style="margin-top: 20px; text-align:center;"></h2>
+    </div>
+  </main>
+  <footer>🌟 Made by Muhammad Aliyan • © 2025</footer>
+
+  <script>
+    const units = {
+      length: {
+        Meters: 1,
+        Kilometers: 1000,
+        Centimeters: 0.01,
+        Inches: 0.0254,
+        Feet: 0.3048
+      },
+      mass: {
+        Kilograms: 1,
+        Grams: 0.001,
+        Pounds: 0.453592,
+        Ounces: 0.0283495
+      },
+      pressure: {
+        Pascals: 1,
+        Bar: 100000,
+        PSI: 6894.76
+      },
+      temperature: {
+        Celsius: 'C',
+        Fahrenheit: 'F',
+        Kelvin: 'K'
+      }
+    };
+
+    function loadUnits() {
+      const category = document.getElementById("category").value;
+      const from = document.getElementById("fromUnit");
+      const to = document.getElementById("toUnit");
+      from.innerHTML = '';
+      to.innerHTML = '';
+
+      Object.keys(units[category]).forEach(unit => {
+        from.innerHTML += `<option value="${unit}">${unit}</option>`;
+        to.innerHTML += `<option value="${unit}">${unit}</option>`;
+      });
+    }
+
+    function convert() {
+      const category = document.getElementById("category").value;
+      const value = parseFloat(document.getElementById("inputValue").value);
+      const from = document.getElementById("fromUnit").value;
+      const to = document.getElementById("toUnit").value;
+      const result = document.getElementById("result");
+
+      if (category === 'temperature') {
+        let val = value;
+        if (from === to) {
+          result.textContent = `${val} ${to}`;
+          return;
+        }
+        // Convert temperature using formulas
+        let tempC;
+        if (from === 'Celsius') tempC = val;
+        if (from === 'Fahrenheit') tempC = (val - 32) * 5/9;
+        if (from === 'Kelvin') tempC = val - 273.15;
+
+        let final;
+        if (to === 'Celsius') final = tempC;
+        if (to === 'Fahrenheit') final = (tempC * 9/5) + 32;
+        if (to === 'Kelvin') final = tempC + 273.15;
+
+        result.textContent = `Result: ${final.toFixed(2)} ${to}`;
+        return;
+      }
+
+      // Normal unit conversion
+      const ratio = units[category][from] / units[category][to];
+      const converted = value * ratio;
+      result.textContent = `Result: ${converted.toFixed(4)} ${to}`;
+    }
+  </script>
+</body>
+</html>
